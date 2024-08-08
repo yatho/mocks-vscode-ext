@@ -12,10 +12,90 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Request Intercept Mocking",
+      "properties": {
+        "requestInterceptMocking.proxyPort": {
+          "type": "number",
+          "default": 8000,
+          "description": "Port for the proxy server"
+        },
+        "requestInterceptMocking.targetPort": {
+          "type": "number",
+          "default": 4200,
+          "description": "Target port for the proxy server"
+        }
+      }
+    },
+    "views": {
+      "requestInterceptMockingView": [
+        {
+          "id": "requestInterceptMockingView",
+          "name": "Request Mock Data"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "requestInterceptMockingView",
+          "title": "Mock available list",
+          "icon": "media/mock.svg"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "extension.refreshMock",
+          "group": "navigation"
+        },
+        {
+          "command": "extension.saveRequest"
+        },
+        {
+          "command": "extension.useMock"
+        },
+        {
+          "command": "extension.deleteMocks"
+        },
+        {
+          "command": "extension.stopSaveRequest"
+        },
+        {
+          "command": "extension.stopUseMock"
+        }
+      ]
+    },
     "commands": [
       {
-        "command": "extension.startProxy",
-        "title": "TEST"
+        "command": "extension.saveRequest",
+        "title": "Save requests"
+      },
+      {
+        "command": "extension.stopSaveRequest",
+        "title": "Stop save requests"
+      },
+      {
+        "command": "extension.showMock",
+        "title": "Display mocks"
+      },
+      {
+        "command": "extension.useMock",
+        "title": "Replace real called by mocks"
+      },
+      {
+        "command": "extension.stopUseMock",
+        "title": "Stop replace real called by mocks"
+      },
+      {
+        "command": "extension.deleteMocks",
+        "title": "Remove all mocks"
+      },
+      {
+        "command": "extension.refreshMock",
+        "title": "Refresh mock list"
       }
     ]
   },
