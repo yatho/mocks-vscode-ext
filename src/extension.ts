@@ -61,14 +61,36 @@ function createTreeViews(context: vscode.ExtensionContext) {
   return treeDataProvider;
 }
 
-function openProxyUri() {
-  if (proxyUri) vscode.env.openExternal(proxyUri);
+async function openProxyUri() {
+  if (proxyUri) {
+    const config = vscode.workspace.getConfiguration("requestInterceptMocking");
+    const automaticallyOpen = config?.get<boolean>("automaticallyOpen", true);
+    if (automaticallyOpen) {
+      vscode.env.openExternal(proxyUri);
+    } else {
+      const openUri = await vscode.window.showInformationMessage(
+        `Do you want open the proxy uri ?`,
+        "Yes",
+        "No"
+      );
+      if (openUri === "Yes") vscode.env.openExternal(proxyUri);
+    }
+  }
 }
 
 export function activate(context: vscode.ExtensionContext) {
   const outputChannel = vscode.window.createOutputChannel("Request mocker");
   let treeDataProvider = createTreeViews(context);
-  const proxy = createProxy(outputChannel);
+  let proxy = createProxy(outputChannel);
+
+  vscode.workspace.onDidChangeConfiguration((event) => {
+    if (!event.affectsConfiguration("requestInterceptMocking")) return;
+    deactivate();
+
+    proxy.close();
+
+    proxy = createProxy(outputChannel);
+  });
 
   function logAndSavecRequest(
     req: http.IncomingMessage,
@@ -113,6 +135,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.saveRequest", () => {
+      vscode.commands.executeCommand("extension.stopSaveRequest");
       proxy.on("proxyRes", function (proxyRes, req, res) {
         if (req.url?.includes("api")) {
           let body: Buffer[] = [];
@@ -178,6 +201,7 @@ export function activate(context: vscode.ExtensionContext) {
       );
     }),
     vscode.commands.registerCommand("extension.useMock", async () => {
+      vscode.commands.executeCommand("extension.stopUseMock");
       proxy.on("proxyReq", function (proxyReq, req, res) {
         if (!req.url?.includes("api")) return;
 
