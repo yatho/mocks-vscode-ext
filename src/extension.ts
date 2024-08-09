@@ -1,4 +1,4 @@
-import vscode from "vscode";
+import vscode, { Uri } from "vscode";
 import http from "http";
 import zlib from "zlib";
 import { RequestInterceptMockingViewProvider } from "./RequestInterceptMockingViewProvider";
@@ -12,12 +12,15 @@ import { createProxyServer } from "http-proxy";
 // TODO : Ordonner les actions dans le menu
 
 let server: http.Server | null = null;
+let proxyUri: Uri | null = null;
 
 function createProxy(outputChannel: vscode.OutputChannel) {
   const config = vscode.workspace.getConfiguration("requestInterceptMocking");
   const proxy = createProxyServer({});
   const proxyPort = config.get<number>("proxyPort", 8000);
   const targetPort = config.get<number>("targetPort", 4200);
+
+  proxyUri = vscode.Uri.parse(`http://localhost:${proxyPort}`);
 
   server = http.createServer(function (req, res) {
     // Remove caching headers
@@ -56,6 +59,10 @@ function createTreeViews(context: vscode.ExtensionContext) {
   });
 
   return treeDataProvider;
+}
+
+function openProxyUri() {
+  if (proxyUri) vscode.env.openExternal(proxyUri);
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -158,6 +165,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
       });
       outputChannel.appendLine("Start save request...");
+      openProxyUri();
     }),
     vscode.commands.registerCommand("extension.stopSaveRequest", () => {
       proxy.removeAllListeners("proxyRes");
@@ -192,6 +200,7 @@ export function activate(context: vscode.ExtensionContext) {
       });
 
       outputChannel.appendLine("Proxy en cours d'exécution...");
+      openProxyUri();
     }),
     vscode.commands.registerCommand("extension.stopUseMock", () => {
       proxy.removeAllListeners("proxyReq");
