@@ -1,9 +1,9 @@
 import vscode, { Uri } from "vscode";
 import http from "http";
 import zlib from "zlib";
-import { RequestInterceptMockingViewProvider } from "./RequestInterceptMockingViewProvider";
-import { RequestMockDetail } from "./RequestMockDetail";
+import { ProxyMockerDetail } from "./ProxyMockerDetail";
 import { createProxyServer } from "http-proxy";
+import { ProxyMockerViewProvider } from "./ProxyMockerViewProvider";
 
 // TODO : Nettoyer tout ça
 // TODO : Créer des tests
@@ -15,7 +15,7 @@ let server: http.Server | null = null;
 let proxyUri: Uri | null = null;
 
 function createProxy(outputChannel: vscode.OutputChannel) {
-  const config = vscode.workspace.getConfiguration("requestInterceptMocking");
+  const config = vscode.workspace.getConfiguration("proxyMocker");
   const proxy = createProxyServer({});
   const proxyPort = config.get<number>("proxyPort", 8000);
   const targetPort = config.get<number>("targetPort", 4200);
@@ -37,12 +37,12 @@ function createProxy(outputChannel: vscode.OutputChannel) {
 }
 
 function createTreeViews(context: vscode.ExtensionContext) {
-  const treeDataProvider = new RequestInterceptMockingViewProvider(context);
-  const treeView = vscode.window.createTreeView("requestInterceptMockingView", {
+  const treeDataProvider = new ProxyMockerViewProvider(context);
+  const treeView = vscode.window.createTreeView("proxyMockerView", {
     treeDataProvider,
   });
 
-  const requestMockDetail = new RequestMockDetail();
+  const proxyMockerDetail = new ProxyMockerDetail();
 
   treeView.onDidChangeSelection((e) => {
     if (e.selection.length === 0) return;
@@ -52,7 +52,7 @@ function createTreeViews(context: vscode.ExtensionContext) {
       [key: string]: { method: string; status: number; body: string }[];
     } = context.globalState.get("requestContent", {});
 
-    requestMockDetail.openMockDetail(
+    proxyMockerDetail.openMockDetail(
       selected.label,
       requestContent[selected.label]
     );
@@ -63,28 +63,27 @@ function createTreeViews(context: vscode.ExtensionContext) {
 
 async function openProxyUri() {
   if (proxyUri) {
-    const config = vscode.workspace.getConfiguration("requestInterceptMocking");
+    const config = vscode.workspace.getConfiguration("proxyMocker");
     const automaticallyOpen = config?.get<boolean>("automaticallyOpen", true);
     if (automaticallyOpen) {
       vscode.env.openExternal(proxyUri);
     } else {
-      const openUri = await vscode.window.showInformationMessage(
-        `Do you want open the proxy uri ?`,
-        "Yes",
-        "No"
-      );
+      const openUri = await vscode.window.showQuickPick(["Yes", "No"], {
+        canPickMany: false,
+        title: "Do you want open the proxy uri ?",
+      });
       if (openUri === "Yes") vscode.env.openExternal(proxyUri);
     }
   }
 }
 
 export function activate(context: vscode.ExtensionContext) {
-  const outputChannel = vscode.window.createOutputChannel("Request mocker");
+  const outputChannel = vscode.window.createOutputChannel("Proxy Mocker");
   let treeDataProvider = createTreeViews(context);
   let proxy = createProxy(outputChannel);
 
   vscode.workspace.onDidChangeConfiguration((event) => {
-    if (!event.affectsConfiguration("requestInterceptMocking")) return;
+    if (!event.affectsConfiguration("proxyMocker")) return;
     deactivate();
 
     proxy.close();
@@ -92,7 +91,7 @@ export function activate(context: vscode.ExtensionContext) {
     proxy = createProxy(outputChannel);
   });
 
-  function logAndSavecRequest(
+  function logAndSaveRequest(
     req: http.IncomingMessage,
     proxyRes: http.IncomingMessage,
     body: string
@@ -134,15 +133,16 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.saveRequest", () => {
-      vscode.commands.executeCommand("extension.stopSaveRequest");
+    vscode.commands.registerCommand("proxyMockerExt.saveRequest", () => {
+      vscode.commands.executeCommand("proxyMockerExt.stopSaveRequest");
       proxy.on("proxyRes", function (proxyRes, req, res) {
+        // TODO : Permit to choose the pattern
         if (req.url?.includes("api")) {
           let body: Buffer[] = [];
           proxyRes.on("data", function (chunk) {
             body.push(chunk);
           });
-          // Lorsque toute la réponse a été reçue
+          // When all body data has been received
           proxyRes.on("end", function () {
             let buffer = Buffer.concat(body);
 
@@ -156,7 +156,7 @@ export function activate(context: vscode.ExtensionContext) {
                     `Error decompressing response: ${err}`
                   );
                 } else {
-                  logAndSavecRequest(req, proxyRes, decoded.toString("utf-8"));
+                  logAndSaveRequest(req, proxyRes, decoded.toString("utf-8"));
                 }
               });
             } else if (encoding === "deflate") {
@@ -166,7 +166,7 @@ export function activate(context: vscode.ExtensionContext) {
                     `Error decompressing response: ${err}`
                   );
                 } else {
-                  logAndSavecRequest(req, proxyRes, decoded.toString("utf-8"));
+                  logAndSaveRequest(req, proxyRes, decoded.toString("utf-8"));
                 }
               });
             } else if (encoding === "br") {
@@ -176,32 +176,32 @@ export function activate(context: vscode.ExtensionContext) {
                     `Error decompressing response: ${err}`
                   );
                 } else {
-                  logAndSavecRequest(req, proxyRes, decoded.toString("utf-8"));
+                  logAndSaveRequest(req, proxyRes, decoded.toString("utf-8"));
                 }
               });
             } else {
               // If not compressed, log as plain text
-              logAndSavecRequest(req, proxyRes, buffer.toString());
+              logAndSaveRequest(req, proxyRes, buffer.toString("utf-8"));
             }
-            vscode.commands.executeCommand("extension.refreshMock");
           });
+          vscode.commands.executeCommand("extension.refreshMock");
         }
       });
       outputChannel.appendLine("Start save request...");
       openProxyUri();
     }),
-    vscode.commands.registerCommand("extension.stopSaveRequest", () => {
+    vscode.commands.registerCommand("proxyMockerExt.stopSaveRequest", () => {
       proxy.removeAllListeners("proxyRes");
       outputChannel.appendLine("Stop save request...");
     }),
-    vscode.commands.registerCommand("extension.showMock", async () => {
+    vscode.commands.registerCommand("proxyMockerExt.showMock", async () => {
       outputChannel.appendLine("Mocks");
       outputChannel.appendLine(
         JSON.stringify(context.globalState.get("requestContent"), null, 2)
       );
     }),
-    vscode.commands.registerCommand("extension.useMock", async () => {
-      vscode.commands.executeCommand("extension.stopUseMock");
+    vscode.commands.registerCommand("proxyMockerExt.useMock", async () => {
+      vscode.commands.executeCommand("proxyMockerExt.stopUseMock");
       proxy.on("proxyReq", function (proxyReq, req, res) {
         if (!req.url?.includes("api")) return;
 
@@ -226,20 +226,20 @@ export function activate(context: vscode.ExtensionContext) {
       outputChannel.appendLine("Proxy en cours d'exécution...");
       openProxyUri();
     }),
-    vscode.commands.registerCommand("extension.stopUseMock", () => {
+    vscode.commands.registerCommand("proxyMockerExt.stopUseMock", () => {
       proxy.removeAllListeners("proxyReq");
       outputChannel.appendLine("Stop use mocks to replace real called...");
     }),
-    vscode.commands.registerCommand("extension.deleteMocks", async () => {
+    vscode.commands.registerCommand("proxyMockerExt.deleteMocks", async () => {
       context.globalState.update("requestContent", {});
-      vscode.commands.executeCommand("extension.refreshMock");
+      vscode.commands.executeCommand("proxyMockerExt.refreshMock");
     }),
     vscode.commands.registerCommand(
-      "extension.deleteMock",
+      "proxyMockerExt.deleteMock",
       async (uri: string) => {}
     ),
     vscode.commands.registerCommand(
-      "extension.refreshMock",
+      "proxyMockerExt.refreshMock",
       async (uri: string) => {
         treeDataProvider.refresh();
       }

@@ -1,20 +1,45 @@
-# requestinterceptmocking README
+# ProxyMocker - Simplify HTTP Request Mocking in VSCode
 
-This is the README for your extension "requestinterceptmocking". After writing up a brief description, we recommend including the following sections.
+## Overview
+
+**ProxyMocker** is a powerful Visual Studio Code extension designed to streamline the process of mocking HTTP requests for developers. Whether you're writing unit tests or debugging, **ProxyMocker** captures and saves every HTTP request made during development, allowing you to easily copy request bodies and create precise mocks. Additionally, the extension can intercept requests and return saved mocks directly, bypassing the final server if a mock exists.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- Intercept and Log HTTP Requests: ProxyMocker acts as a proxy to intercept all HTTP requests made by your application. All intercepted requests are logged and saved within VSCode, giving you easy access to request data.
+- Simplify Mocking for Unit Tests: Easily copy the body of any intercepted request. This simplifies the process of creating accurate mock data for unit tests, saving you time and reducing errors.
+- Mock Request Responses: ProxyMocker can automatically respond with pre-configured mocks, allowing you to bypass the final server. This feature is perfect for offline development and testing, or when the server is unavailable.
+- Customizable Mocking Rules: Define your own rules for mocking requests based on URL patterns, headers, and other request properties.
+- Toggle Proxy On/Off: Enable or disable the proxy and mocking functionality with a simple command, so you can switch between live and mock environments effortlessly.
 
-For example if there is an image subfolder under your extension project workspace:
+## Installation
 
-\!\[feature X\]\(images/feature-x.png\)
+1. Open VSCode and go to the Extensions view _(Ctrl+Shift+X or Cmd+Shift+X)_.
+2. Search for **ProxyMocker**.
+3. Click **Install** and follow the instructions.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Getting started
 
-## Requirements
+1. Activate ProxyMocker:
+   After installation, activate the extension by running the command: ProxyMocker: Start Proxy. This will start intercepting all HTTP requests made by your application.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+2. View Logged Requests:
+   View intercepted requests in the dedicated ProxyMocker panel within VSCode. Here, you can explore request details, including headers and body content.
+
+3. Copy Request Bodies:
+   Select any intercepted request to view its details. Use the Copy Body button to copy the request body to your clipboard, simplifying the process of creating mocks.
+
+4. Create and Manage Mocks:
+   Save a request as a mock by clicking the Save as Mock button. Configure the response you want to return when the same request is made in the future. ProxyMocker will then respond with the saved mock whenever the same request is intercepted.
+
+5. Toggle Mocking:
+   Use the ProxyMocker: Toggle Mocking command to enable or disable mocking. When mocking is enabled, requests matching your saved mocks will not be sent to the server.
+
+## Commands
+
+<!-- TODO : List all commands -->
+
+-
 
 ## Extension Settings
 
@@ -24,48 +49,9 @@ For example:
 
 This extension contributes the following settings:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+- `myExtension.enable`: Enable/disable this extension.
+- `myExtension.thing`: Set to `blah` to do something.
 
-## Known Issues
+## Contributing
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+If you'd like to contribute to **ProxyMocker**, feel free to submit issues or pull requests on the GitHub repository. Contributions are welcome and appreciated!

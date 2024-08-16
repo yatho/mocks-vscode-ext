@@ -1,6 +1,6 @@
 import vscode from "vscode";
 
-export class RequestInterceptMockingViewProvider
+export class ProxyMockerViewProvider
   implements vscode.TreeDataProvider<RequestMock>
 {
   constructor(private context: vscode.ExtensionContext) {}

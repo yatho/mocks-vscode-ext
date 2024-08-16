@@ -1,8 +1,22 @@
 {
-  "name": "requestinterceptmocking",
-  "displayName": "requestInterceptMocking",
-  "description": "",
+  "name": "proxy-mocker",
+  "displayName": "proxyMocker",
+  "description": "A Visual Studio Code extension to intercept HTTP requests, simplify mocking for unit tests, and optionally mock responses directly.",
+  "author": {
+    "name": "Yann-Thomas Le Moigne",
+    "email": "yann.tho.le.moigne@gmail.com"
+  },
   "version": "0.0.1",
+  "keywords": [
+    "vscode",
+    "extension",
+    "proxy",
+    "mock",
+    "intercept",
+    "http",
+    "request"
+  ],
+  "license": "MIT",
   "engines": {
     "vscode": "^1.92.0"
   },
@@ -14,19 +28,19 @@
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "Request Intercept Mocking",
+      "title": "Proxy Mocker",
       "properties": {
-        "requestInterceptMocking.proxyPort": {
+        "proxyMocker.proxyPort": {
           "type": "number",
           "default": 8000,
           "description": "Port for the proxy server"
         },
-        "requestInterceptMocking.targetPort": {
+        "proxyMocker.targetPort": {
           "type": "number",
           "default": 4200,
           "description": "Target port for the proxy server"
         },
-        "requestInterceptMocking.automaticallyOpen": {
+        "proxyMocker.automaticallyOpen": {
           "type": "boolean",
           "default": false,
           "description": "Open automatically the browser on proxy url when use mock or save request"
@@ -34,17 +48,17 @@
       }
     },
     "views": {
-      "requestInterceptMockingView": [
+      "proxyMockerView": [
         {
-          "id": "requestInterceptMockingView",
-          "name": "Request Mock Data"
+          "id": "proxyMockerView",
+          "name": "Proxy Mocker"
         }
       ]
     },
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "requestInterceptMockingView",
+          "id": "proxyMockerView",
           "title": "Mock available list",
           "icon": "media/mock.svg"
         }
@@ -53,61 +67,61 @@
     "menus": {
       "view/title": [
         {
-          "command": "extension.refreshMock",
+          "command": "proxyMockerExt.refreshMock",
           "group": "navigation"
         },
         {
-          "command": "extension.saveRequest"
+          "command": "proxyMockerExt.saveRequest"
         },
         {
-          "command": "extension.useMock"
+          "command": "proxyMockerExt.useMock"
         },
         {
-          "command": "extension.deleteMocks"
+          "command": "proxyMockerExt.deleteMocks"
         },
         {
-          "command": "extension.stopSaveRequest"
+          "command": "proxyMockerExt.stopSaveRequest"
         },
         {
-          "command": "extension.stopUseMock"
+          "command": "proxyMockerExt.stopUseMock"
         }
       ]
     },
     "commands": [
       {
-        "command": "extension.saveRequest",
+        "command": "proxyMockerExt.saveRequest",
         "title": "Save requests",
-        "category": "Request Intercept Mocking"
+        "category": "Proxy Mocker"
       },
       {
-        "command": "extension.stopSaveRequest",
+        "command": "proxyMockerExt.stopSaveRequest",
         "title": "Stop save requests",
-        "category": "Request Intercept Mocking"
+        "category": "Proxy Mocker"
       },
       {
-        "command": "extension.showMock",
+        "command": "proxyMockerExt.showMock",
         "title": "Display mocks",
-        "category": "Request Intercept Mocking"
+        "category": "Proxy Mocker"
       },
       {
-        "command": "extension.useMock",
+        "command": "proxyMockerExt.useMock",
         "title": "Replace real called by mocks",
-        "category": "Request Intercept Mocking"
+        "category": "Proxy Mocker"
       },
       {
-        "command": "extension.stopUseMock",
+        "command": "proxyMockerExt.stopUseMock",
         "title": "Stop replace real called by mocks",
-        "category": "Request Intercept Mocking"
+        "category": "Proxy Mocker"
       },
       {
-        "command": "extension.deleteMocks",
+        "command": "proxyMockerExt.deleteMocks",
         "title": "Remove all mocks",
-        "category": "Request Intercept Mocking"
+        "category": "Proxy Mocker"
       },
       {
-        "command": "extension.refreshMock",
+        "command": "proxyMockerExt.refreshMock",
         "title": "Refresh mock list",
-        "category": "Request Intercept Mocking"
+        "category": "Proxy Mocker"
       }
     ]
   },
@@ -135,5 +149,13 @@
     "http-proxy": "^1.18.1",
     "http-proxy-middleware": "^3.0.0",
     "zlib": "^1.0.5"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yatho/proxy-mocker-ext.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yatho/proxy-mocker-ext/issues"
+  },
+  "homepage": "https://github.com/yatho/proxy-mocker-ext#readme"
 }
