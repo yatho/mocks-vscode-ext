@@ -5,9 +5,9 @@ import { ProxyMockerDetail } from "./ProxyMockerDetail";
 import { createProxyServer } from "http-proxy";
 import { ProxyMockerViewProvider } from "./ProxyMockerViewProvider";
 
-// TODO : Nettoyer tout ça
+const PROXY_MOCKER = "proxyMocker";
+
 // TODO : Créer des tests
-// TODO : Changer le nom de l'extension
 // TODO : Surcharger par des icones
 // TODO : Ordonner les actions dans le menu
 
@@ -15,7 +15,7 @@ let server: http.Server | null = null;
 let proxyUri: Uri | null = null;
 
 function createProxy(outputChannel: vscode.OutputChannel) {
-  const config = vscode.workspace.getConfiguration("proxyMocker");
+  const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
   const proxy = createProxyServer({});
   const proxyPort = config.get<number>("proxyPort", 8000);
   const targetPort = config.get<number>("targetPort", 4200);
@@ -63,7 +63,7 @@ function createTreeViews(context: vscode.ExtensionContext) {
 
 async function openProxyUri() {
   if (proxyUri) {
-    const config = vscode.workspace.getConfiguration("proxyMocker");
+    const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
     const automaticallyOpen = config?.get<boolean>("automaticallyOpen", true);
     if (automaticallyOpen) {
       vscode.env.openExternal(proxyUri);
@@ -83,7 +83,7 @@ export function activate(context: vscode.ExtensionContext) {
   let proxy = createProxy(outputChannel);
 
   vscode.workspace.onDidChangeConfiguration((event) => {
-    if (!event.affectsConfiguration("proxyMocker")) return;
+    if (!event.affectsConfiguration(PROXY_MOCKER)) return;
     deactivate();
 
     proxy.close();
@@ -135,9 +135,10 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("proxyMockerExt.saveRequest", () => {
       vscode.commands.executeCommand("proxyMockerExt.stopSaveRequest");
+      const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
+      const pathPattern = config.get<string>("pathPattern", "api");
       proxy.on("proxyRes", function (proxyRes, req, res) {
-        // TODO : Permit to choose the pattern
-        if (req.url?.includes("api")) {
+        if (req.url?.match(pathPattern)) {
           let body: Buffer[] = [];
           proxyRes.on("data", function (chunk) {
             body.push(chunk);
