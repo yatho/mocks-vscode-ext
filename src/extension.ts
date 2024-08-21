@@ -9,7 +9,6 @@ const PROXY_MOCKER = "proxyMocker";
 // TODO : Créer des tests
 
 let server: http.Server | null = null;
-let proxyUri: vscode.Uri | null = null;
 
 function createProxy(outputChannel: vscode.OutputChannel) {
   const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
@@ -17,18 +16,13 @@ function createProxy(outputChannel: vscode.OutputChannel) {
   const proxyPort = config.get<number>("proxyPort", 8000);
   const targetUri = config.get<string>("targetUri", "http://localhost:4200");
 
-  proxyUri = vscode.Uri.parse(targetUri);
-
   server = http.createServer(function (req, res) {
     // Remove caching headers
     delete req.headers["if-none-match"];
     delete req.headers["if-modified-since"];
     proxy.web(req, res, { target: targetUri });
   });
-
   server.listen(proxyPort);
-
-  outputChannel.appendLine(`Proxy démarré sur http://localhost:${proxyPort}`);
 
   return proxy;
 }
@@ -61,8 +55,10 @@ function createTreeViews(context: vscode.ExtensionContext) {
 }
 
 async function openProxyUri() {
+  const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
+  const proxyPort = config.get<number>("proxyPort", 8000);
+  const proxyUri = vscode.Uri.parse(`http://localhost:${proxyPort}`);
   if (proxyUri) {
-    const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
     const automaticallyOpen = config?.get<boolean>("automaticallyOpen", true);
     if (automaticallyOpen) {
       vscode.env.openExternal(proxyUri);
