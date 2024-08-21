@@ -23,6 +23,7 @@
   "categories": [
     "Other"
   ],
+  "publisher": "yatho",
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
