@@ -8,10 +8,7 @@ export class ProxyMockerDetail {
     const view = vscode.window.createWebviewPanel(
       "proxyMockerViewDetails",
       uri,
-      vscode.ViewColumn.Active,
-      {
-        enableScripts: true,
-      }
+      vscode.ViewColumn.Active
     );
 
     view.webview.html = getWebviewContent(uri, mock);
@@ -88,20 +85,10 @@ function getWebviewContent(
           (mock) => `<div class="mock-container">
               <p><strong>Method type:</strong> ${mock.method}</p>
               <p><strong>Status code:</strong> ${mock.status}</p>
-              <button onclick="copyToClipboard('${mock.body}')">Copy response body</button>
               <p><strong>Response body:</strong></p>
               <pre>${mock.body}</pre>
           </div>`
         )}
-        <script>
-            function copyToClipboard(text) {
-                navigator.clipboard.writeText(text).then(function() {
-                    alert('Response body copied to clipboard!');
-                }, function(err) {
-                    alert('Failed to copy text: ', err);
-                });
-            }
-        </script>
     </body>
     </html>
     `;
