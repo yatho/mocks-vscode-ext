@@ -1,6 +1,5 @@
-import vscode, { Uri } from "vscode";
+import vscode from "vscode";
 import http from "http";
-import zlib from "zlib";
 import { ProxyMockerDetail } from "./ProxyMockerDetail";
 import { createProxyServer } from "http-proxy";
 import { ProxyMockerViewProvider } from "./ProxyMockerViewProvider";
@@ -10,21 +9,21 @@ const PROXY_MOCKER = "proxyMocker";
 // TODO : Créer des tests
 
 let server: http.Server | null = null;
-let proxyUri: Uri | null = null;
+let proxyUri: vscode.Uri | null = null;
 
 function createProxy(outputChannel: vscode.OutputChannel) {
   const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
   const proxy = createProxyServer({});
   const proxyPort = config.get<number>("proxyPort", 8000);
-  const targetPort = config.get<number>("targetPort", 4200);
+  const targetUri = config.get<string>("targetUri", "http://localhost:4200");
 
-  proxyUri = vscode.Uri.parse(`http://localhost:${proxyPort}`);
+  proxyUri = vscode.Uri.parse(targetUri);
 
   server = http.createServer(function (req, res) {
     // Remove caching headers
     delete req.headers["if-none-match"];
     delete req.headers["if-modified-since"];
-    proxy.web(req, res, { target: `http://localhost:${targetPort}` });
+    proxy.web(req, res, { target: targetUri });
   });
 
   server.listen(proxyPort);
@@ -43,7 +42,9 @@ function createTreeViews(context: vscode.ExtensionContext) {
   const proxyMockerDetail = new ProxyMockerDetail();
 
   treeView.onDidChangeSelection((e) => {
-    if (e.selection.length === 0) {return;}
+    if (e.selection.length === 0) {
+      return;
+    }
 
     const selected = e.selection[0];
     const requestContent: {
@@ -70,7 +71,9 @@ async function openProxyUri() {
         canPickMany: false,
         title: "Do you want open the proxy uri ?",
       });
-      if (openUri === "Yes") {vscode.env.openExternal(proxyUri);}
+      if (openUri === "Yes") {
+        vscode.env.openExternal(proxyUri);
+      }
     }
   }
 }
@@ -97,7 +100,9 @@ export function activate(context: vscode.ExtensionContext) {
   let proxy = createProxy(outputChannel);
 
   vscode.workspace.onDidChangeConfiguration((event) => {
-    if (!event.affectsConfiguration(PROXY_MOCKER)) {return;}
+    if (!event.affectsConfiguration(PROXY_MOCKER)) {
+      return;
+    }
     deactivate();
 
     proxy.close();
@@ -119,7 +124,9 @@ export function activate(context: vscode.ExtensionContext) {
     res: http.IncomingMessage,
     body: string
   ) {
-    if (!req.url || !req.method || !res.statusCode) {return;}
+    if (!req.url || !req.method || !res.statusCode) {
+      return;
+    }
 
     let requestContent: {
       [key: string]: { method: string; status: number; body: string }[];
@@ -148,10 +155,9 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("proxyMockerExt.saveRequest", () => {
-      vscode.commands.executeCommand("proxyMockerExt.stopSaveRequest");
       changeSaveContext(true);
       const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
-      const pathPattern = config.get<string>("pathPattern", "api");
+      const pathPattern = config.get<string>("pathPattern", "/api");
       proxy.on("proxyRes", function (proxyRes, req, res) {
         if (req.url?.match(pathPattern)) {
           let body: Buffer[] = [];
@@ -164,8 +170,8 @@ export function activate(context: vscode.ExtensionContext) {
             const encoding = proxyRes.headers["content-encoding"];
             const decoded = await decodeBuffer(buffer, encoding);
             logAndSaveRequest(req, proxyRes, decoded.toString("utf-8"));
+            vscode.commands.executeCommand("extension.refreshMock");
           });
-          vscode.commands.executeCommand("extension.refreshMock");
         }
       });
       outputChannel.appendLine("Start save request...");
@@ -177,16 +183,18 @@ export function activate(context: vscode.ExtensionContext) {
       outputChannel.appendLine("Stop save request...");
     }),
     vscode.commands.registerCommand("proxyMockerExt.showMock", async () => {
+      outputChannel.show();
       outputChannel.appendLine("Mocks");
       outputChannel.appendLine(
         JSON.stringify(context.globalState.get("requestContent"), null, 2)
       );
     }),
     vscode.commands.registerCommand("proxyMockerExt.useMock", async () => {
-      vscode.commands.executeCommand("proxyMockerExt.stopUseMock");
       changeMockContext(true);
       proxy.on("proxyReq", function (proxyReq, req, res) {
-        if (!req.url?.includes("api")) {return;}
+        if (!req.url?.includes("api")) {
+          return;
+        }
 
         let requestContent: {
           [key: string]: { method: string; status: number; body: string }[];

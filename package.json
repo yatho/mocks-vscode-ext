@@ -37,10 +37,10 @@
           "description": "Port for the proxy server",
           "order": 1
         },
-        "proxyMocker.targetPort": {
-          "type": "number",
-          "default": 4200,
-          "description": "Target port for the proxy server",
+        "proxyMocker.targetUri": {
+          "type": "string",
+          "default": "http://localhost:4200",
+          "description": "Target Uri for the proxy server",
           "order": 2
         },
         "proxyMocker.automaticallyOpen": {
