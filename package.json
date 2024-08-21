@@ -113,12 +113,14 @@
         "command": "proxyMockerExt.saveRequest",
         "title": "Save requests",
         "category": "Proxy Mocker",
+        "enablement": "!proxyMockerExt.isSaveRequest",
         "icon": "$(save)"
       },
       {
         "command": "proxyMockerExt.stopSaveRequest",
         "title": "Stop save requests",
         "category": "Proxy Mocker",
+        "enablement": "proxyMockerExt.isSaveRequest",
         "icon": "$(stop-circle)"
       },
       {
@@ -130,12 +132,14 @@
         "command": "proxyMockerExt.useMock",
         "title": "Replace real called by mocks",
         "category": "Proxy Mocker",
+        "enablement": "!proxyMockerExt.isUseMock",
         "icon": "$(symbol-constant)"
       },
       {
         "command": "proxyMockerExt.stopUseMock",
         "title": "Stop replace real called by mocks",
         "category": "Proxy Mocker",
+        "enablement": "proxyMockerExt.isUseMock",
         "icon": "$(stop)"
       },
       {
