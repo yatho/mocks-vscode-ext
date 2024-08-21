@@ -8,8 +8,6 @@ import { ProxyMockerViewProvider } from "./ProxyMockerViewProvider";
 const PROXY_MOCKER = "proxyMocker";
 
 // TODO : Créer des tests
-// TODO : Surcharger par des icones
-// TODO : Ordonner les actions dans le menu
 
 let server: http.Server | null = null;
 let proxyUri: Uri | null = null;
@@ -77,6 +75,22 @@ async function openProxyUri() {
   }
 }
 
+function changeMockContext(value: boolean) {
+  vscode.commands.executeCommand(
+    "setContext",
+    "proxyMockerExt.isUseMock",
+    value
+  );
+}
+
+function changeSaveContext(value: boolean) {
+  vscode.commands.executeCommand(
+    "setContext",
+    "proxyMockerExt.isSaveRequest",
+    value
+  );
+}
+
 export function activate(context: vscode.ExtensionContext) {
   const outputChannel = vscode.window.createOutputChannel("Proxy Mocker");
   let treeDataProvider = createTreeViews(context);
@@ -135,6 +149,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("proxyMockerExt.saveRequest", () => {
       vscode.commands.executeCommand("proxyMockerExt.stopSaveRequest");
+      changeSaveContext(true);
       const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
       const pathPattern = config.get<string>("pathPattern", "api");
       proxy.on("proxyRes", function (proxyRes, req, res) {
@@ -192,6 +207,7 @@ export function activate(context: vscode.ExtensionContext) {
       openProxyUri();
     }),
     vscode.commands.registerCommand("proxyMockerExt.stopSaveRequest", () => {
+      changeSaveContext(false);
       proxy.removeAllListeners("proxyRes");
       outputChannel.appendLine("Stop save request...");
     }),
@@ -203,6 +219,7 @@ export function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand("proxyMockerExt.useMock", async () => {
       vscode.commands.executeCommand("proxyMockerExt.stopUseMock");
+      changeMockContext(true);
       proxy.on("proxyReq", function (proxyReq, req, res) {
         if (!req.url?.includes("api")) return;
 
@@ -228,6 +245,7 @@ export function activate(context: vscode.ExtensionContext) {
       openProxyUri();
     }),
     vscode.commands.registerCommand("proxyMockerExt.stopUseMock", () => {
+      changeMockContext(false);
       proxy.removeAllListeners("proxyReq");
       outputChannel.appendLine("Stop use mocks to replace real called...");
     }),

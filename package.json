@@ -33,17 +33,20 @@
         "proxyMocker.proxyPort": {
           "type": "number",
           "default": 8000,
-          "description": "Port for the proxy server"
+          "description": "Port for the proxy server",
+          "order": 1
         },
         "proxyMocker.targetPort": {
           "type": "number",
           "default": 4200,
-          "description": "Target port for the proxy server"
+          "description": "Target port for the proxy server",
+          "order": 2
         },
         "proxyMocker.automaticallyOpen": {
           "type": "boolean",
           "default": false,
-          "description": "Open automatically the browser on proxy url when use mock or save request"
+          "description": "Open automatically the browser on proxy url when use mock or save request",
+          "order": 3
         }
       }
     },
@@ -68,22 +71,33 @@
       "view/title": [
         {
           "command": "proxyMockerExt.refreshMock",
-          "group": "navigation"
+          "group": "navigation@0",
+          "when": "view == proxyMockerView"
         },
         {
-          "command": "proxyMockerExt.saveRequest"
+          "command": "proxyMockerExt.deleteMocks",
+          "group": "navigation@1",
+          "when": "view == proxyMockerView"
         },
         {
-          "command": "proxyMockerExt.useMock"
+          "command": "proxyMockerExt.saveRequest",
+          "group": "navigation@2",
+          "when": "view == proxyMockerView && !proxyMockerExt.isSaveRequest"
         },
         {
-          "command": "proxyMockerExt.deleteMocks"
+          "command": "proxyMockerExt.stopSaveRequest",
+          "group": "navigation@2",
+          "when": "view == proxyMockerView && proxyMockerExt.isSaveRequest"
         },
         {
-          "command": "proxyMockerExt.stopSaveRequest"
+          "command": "proxyMockerExt.useMock",
+          "group": "navigation@3",
+          "when": "view == proxyMockerView && !proxyMockerExt.isUseMock"
         },
         {
-          "command": "proxyMockerExt.stopUseMock"
+          "command": "proxyMockerExt.stopUseMock",
+          "group": "navigation@3",
+          "when": "view == proxyMockerView && proxyMockerExt.isUseMock"
         }
       ]
     },
@@ -91,12 +105,14 @@
       {
         "command": "proxyMockerExt.saveRequest",
         "title": "Save requests",
-        "category": "Proxy Mocker"
+        "category": "Proxy Mocker",
+        "icon": "$(save)"
       },
       {
         "command": "proxyMockerExt.stopSaveRequest",
         "title": "Stop save requests",
-        "category": "Proxy Mocker"
+        "category": "Proxy Mocker",
+        "icon": "$(stop-circle)"
       },
       {
         "command": "proxyMockerExt.showMock",
@@ -106,22 +122,26 @@
       {
         "command": "proxyMockerExt.useMock",
         "title": "Replace real called by mocks",
-        "category": "Proxy Mocker"
+        "category": "Proxy Mocker",
+        "icon": "$(symbol-constant)"
       },
       {
         "command": "proxyMockerExt.stopUseMock",
         "title": "Stop replace real called by mocks",
-        "category": "Proxy Mocker"
+        "category": "Proxy Mocker",
+        "icon": "$(stop)"
       },
       {
         "command": "proxyMockerExt.deleteMocks",
         "title": "Remove all mocks",
-        "category": "Proxy Mocker"
+        "category": "Proxy Mocker",
+        "icon": "$(clear-all)"
       },
       {
         "command": "proxyMockerExt.refreshMock",
         "title": "Refresh mock list",
-        "category": "Proxy Mocker"
+        "category": "Proxy Mocker",
+        "icon": "$(refresh)"
       }
     ]
   },
