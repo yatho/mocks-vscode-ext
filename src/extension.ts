@@ -44,7 +44,7 @@ function createTreeViews(context: vscode.ExtensionContext) {
   const proxyMockerDetail = new ProxyMockerDetail();
 
   treeView.onDidChangeSelection((e) => {
-    if (e.selection.length === 0) return;
+    if (e.selection.length === 0) {return;}
 
     const selected = e.selection[0];
     const requestContent: {
@@ -71,7 +71,7 @@ async function openProxyUri() {
         canPickMany: false,
         title: "Do you want open the proxy uri ?",
       });
-      if (openUri === "Yes") vscode.env.openExternal(proxyUri);
+      if (openUri === "Yes") {vscode.env.openExternal(proxyUri);}
     }
   }
 }
@@ -98,7 +98,7 @@ export function activate(context: vscode.ExtensionContext) {
   let proxy = createProxy(outputChannel);
 
   vscode.workspace.onDidChangeConfiguration((event) => {
-    if (!event.affectsConfiguration(PROXY_MOCKER)) return;
+    if (!event.affectsConfiguration(PROXY_MOCKER)) {return;}
     deactivate();
 
     proxy.close();
@@ -120,7 +120,7 @@ export function activate(context: vscode.ExtensionContext) {
     res: http.IncomingMessage,
     body: string
   ) {
-    if (!req.url || !req.method || !res.statusCode) return;
+    if (!req.url || !req.method || !res.statusCode) {return;}
 
     let requestContent: {
       [key: string]: { method: string; status: number; body: string }[];
@@ -187,7 +187,7 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.commands.executeCommand("proxyMockerExt.stopUseMock");
       changeMockContext(true);
       proxy.on("proxyReq", function (proxyReq, req, res) {
-        if (!req.url?.includes("api")) return;
+        if (!req.url?.includes("api")) {return;}
 
         let requestContent: {
           [key: string]: { method: string; status: number; body: string }[];
