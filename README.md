@@ -19,30 +19,27 @@
 
 ## Getting started
 
-1. View Logged Requests:
-   View intercepted requests in the dedicated ProxyMocker panel within VSCode. Here, you can explore request details, including headers and body content.
+Once installed, it is necessary to configure the extension via the VSCode settings. For more details, see the extension settings section.
 
-2. Create and Manage Mocks:
-   Save a request as a mock by clicking the Save as Mock button. Configure the response you want to return when the same request is made in the future. ProxyMocker will then respond with the saved mock whenever the same request is intercepted.
+To start capturing your first requests, start a browser with the proxy url and use the command **Proxy Mocker: Save requests**.
 
-3. Toggle Mocking:
-   Use the ProxyMocker: Toggle Mocking command to enable or disable mocking. When mocking is enabled, requests matching your saved mocks will not be sent to the server.
+To use mocks instead of requests, once they are captured, use the command **Proxy Mocker: Mock requests if existing mock**.
 
 ## Commands
 
-1. Proxy Mocker: Save requests - Begins saving HTTP requests that match a certain pattern, specified by proxyMocker.pathPattern. The pattern can be configured in the extension settings.
-2. Proxy Mocker: Stop saving requests - Stops the process of saving requests that was initiated by the "Save requests" command.
-3. Proxy Mocker: Mock requests if existing mock - Replaces actual HTTP calls with previously saved mock responses if matching mocks exist.
-4. Proxy Mocker: Stop mocking requests - Disables the mocking of requests, allowing real HTTP requests to be made again.
-5. Proxy Mocker: Refresh mocks - Refreshes the list of available mock requests shown in the panel.
-6. Proxy Mocker: Remove all mocks - Deletes all the saved mock requests from the system.
+1. **Proxy Mocker: Save requests** - Begins saving HTTP requests that match a certain pattern, specified by proxyMocker.pathPattern. The pattern can be configured in the extension settings.
+2. **Proxy Mocker: Stop saving requests** - Stops the process of saving requests that was initiated by the "Save requests" command.
+3. **Proxy Mocker: Mock requests if existing mock** - Replaces actual HTTP calls with previously saved mock responses if matching mocks exist.
+4. **Proxy Mocker: Stop mocking requests** - Disables the mocking of requests, allowing real HTTP requests to be made again.
+5. **Proxy Mocker: Refresh mocks** - Refreshes the list of available mock requests shown in the panel.
+6. **Proxy Mocker: Remove all mocks** - Deletes all the saved mock requests from the system.
 
 ## Extension Settings
 
 This extension offers several customizable settings to configure how the proxy server operates and handle requests.
 
 - `proxyMocker.proxyPort`: Specifies the port on which the proxy server will listen for incoming requests. You can change this to any available port as needed. By default is **8000**.
-- `proxyMocker.targetPort`: Defines the target port of the backend server or service that the proxy server will forward requests to. This is typically the port where your application is running. By default: **4200**.
+- `proxyMocker.targetUri`: Defines the uri target of the backend server or service that the proxy server will forward requests to. This is typically the uri where your application is running. By default: **http://localhost:4200**.
 - `proxyMocker.automaticallyOpen`: If set to true, the browser will automatically open the proxy URL when the "Mock requests" or "Save requests" mode is activated. This is helpful for quickly testing mocked endpoints.
 - `proxyMocker.pathPattern`: Defines the path pattern used to intercept requests. Only requests matching this pattern will be saved or mocked by the extension. You can customize this to match specific API endpoints, for example **/api/v1/**. By default: **/api**.
 
