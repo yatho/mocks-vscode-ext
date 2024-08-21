@@ -7,7 +7,6 @@ import { ProxyMockerViewProvider } from "./ProxyMockerViewProvider";
 import { decodeBuffer } from "http-encoding";
 
 const PROXY_MOCKER = "proxyMocker";
-
 // TODO : Créer des tests
 
 let server: http.Server | null = null;
