@@ -9,48 +9,42 @@
 - Intercept and Log HTTP Requests: ProxyMocker acts as a proxy to intercept all HTTP requests made by your application. All intercepted requests are logged and saved within VSCode, giving you easy access to request data.
 - Simplify Mocking for Unit Tests: Easily copy the body of any intercepted request. This simplifies the process of creating accurate mock data for unit tests, saving you time and reducing errors.
 - Mock Request Responses: ProxyMocker can automatically respond with pre-configured mocks, allowing you to bypass the final server. This feature is perfect for offline development and testing, or when the server is unavailable.
-- Customizable Mocking Rules: Define your own rules for mocking requests based on URL patterns, headers, and other request properties.
-- Toggle Proxy On/Off: Enable or disable the proxy and mocking functionality with a simple command, so you can switch between live and mock environments effortlessly.
+- Customizable Mocking Rules: Define your own rules for mocking requests based on URL patterns, headers, and other request properties - lity with a simple command, so you can switch between live and mock environments effortlessly.
 
 ## Installation
 
 1. Open VSCode and go to the Extensions view _(Ctrl+Shift+X or Cmd+Shift+X)_.
-2. Search for **ProxyMocker**.
+2. Search for **proxyMocker**.
 3. Click **Install** and follow the instructions.
 
 ## Getting started
 
-1. Activate ProxyMocker:
-   After installation, activate the extension by running the command: ProxyMocker: Start Proxy. This will start intercepting all HTTP requests made by your application.
-
-2. View Logged Requests:
+1. View Logged Requests:
    View intercepted requests in the dedicated ProxyMocker panel within VSCode. Here, you can explore request details, including headers and body content.
 
-3. Copy Request Bodies:
-   Select any intercepted request to view its details. Use the Copy Body button to copy the request body to your clipboard, simplifying the process of creating mocks.
-
-4. Create and Manage Mocks:
+2. Create and Manage Mocks:
    Save a request as a mock by clicking the Save as Mock button. Configure the response you want to return when the same request is made in the future. ProxyMocker will then respond with the saved mock whenever the same request is intercepted.
 
-5. Toggle Mocking:
+3. Toggle Mocking:
    Use the ProxyMocker: Toggle Mocking command to enable or disable mocking. When mocking is enabled, requests matching your saved mocks will not be sent to the server.
 
 ## Commands
 
-<!-- TODO : List all commands -->
-
--
+1. Proxy Mocker: Save requests - Begins saving HTTP requests that match a certain pattern, specified by proxyMocker.pathPattern. The pattern can be configured in the extension settings.
+2. Proxy Mocker: Stop saving requests - Stops the process of saving requests that was initiated by the "Save requests" command.
+3. Proxy Mocker: Mock requests if existing mock - Replaces actual HTTP calls with previously saved mock responses if matching mocks exist.
+4. Proxy Mocker: Stop mocking requests - Disables the mocking of requests, allowing real HTTP requests to be made again.
+5. Proxy Mocker: Refresh mocks - Refreshes the list of available mock requests shown in the panel.
+6. Proxy Mocker: Remove all mocks - Deletes all the saved mock requests from the system.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+This extension offers several customizable settings to configure how the proxy server operates and handle requests.
 
-For example:
-
-This extension contributes the following settings:
-
-- `myExtension.enable`: Enable/disable this extension.
-- `myExtension.thing`: Set to `blah` to do something.
+- `proxyMocker.proxyPort`: Specifies the port on which the proxy server will listen for incoming requests. You can change this to any available port as needed. By default is **8000**.
+- `proxyMocker.targetPort`: Defines the target port of the backend server or service that the proxy server will forward requests to. This is typically the port where your application is running. By default: **4200**.
+- `proxyMocker.automaticallyOpen`: If set to true, the browser will automatically open the proxy URL when the "Mock requests" or "Save requests" mode is activated. This is helpful for quickly testing mocked endpoints.
+- `proxyMocker.pathPattern`: Defines the path pattern used to intercept requests. Only requests matching this pattern will be saved or mocked by the extension. You can customize this to match specific API endpoints, for example **/api/v1/**. By default: **/api**.
 
 ## Contributing
 
