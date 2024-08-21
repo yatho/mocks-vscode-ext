@@ -172,6 +172,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "http-encoding": "^2.0.1",
     "http-proxy": "^1.18.1",
     "http-proxy-middleware": "^3.0.0",
     "zlib": "^1.0.5"

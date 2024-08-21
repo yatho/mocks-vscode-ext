@@ -4,6 +4,7 @@ import zlib from "zlib";
 import { ProxyMockerDetail } from "./ProxyMockerDetail";
 import { createProxyServer } from "http-proxy";
 import { ProxyMockerViewProvider } from "./ProxyMockerViewProvider";
+import { decodeBuffer } from "http-encoding";
 
 const PROXY_MOCKER = "proxyMocker";
 
@@ -159,46 +160,11 @@ export function activate(context: vscode.ExtensionContext) {
             body.push(chunk);
           });
           // When all body data has been received
-          proxyRes.on("end", function () {
+          proxyRes.on("end", async function () {
             let buffer = Buffer.concat(body);
-
-            // Check if the response is compressed
             const encoding = proxyRes.headers["content-encoding"];
-
-            if (encoding === "gzip") {
-              zlib.gunzip(buffer, (err, decoded) => {
-                if (err) {
-                  outputChannel.appendLine(
-                    `Error decompressing response: ${err}`
-                  );
-                } else {
-                  logAndSaveRequest(req, proxyRes, decoded.toString("utf-8"));
-                }
-              });
-            } else if (encoding === "deflate") {
-              zlib.inflate(buffer, (err, decoded) => {
-                if (err) {
-                  outputChannel.appendLine(
-                    `Error decompressing response: ${err}`
-                  );
-                } else {
-                  logAndSaveRequest(req, proxyRes, decoded.toString("utf-8"));
-                }
-              });
-            } else if (encoding === "br") {
-              zlib.brotliDecompress(buffer, (err, decoded) => {
-                if (err) {
-                  outputChannel.appendLine(
-                    `Error decompressing response: ${err}`
-                  );
-                } else {
-                  logAndSaveRequest(req, proxyRes, decoded.toString("utf-8"));
-                }
-              });
-            } else {
-              // If not compressed, log as plain text
-              logAndSaveRequest(req, proxyRes, buffer.toString("utf-8"));
-            }
+            const decoded = await decodeBuffer(buffer, encoding);
+            logAndSaveRequest(req, proxyRes, decoded.toString("utf-8"));
           });
           vscode.commands.executeCommand("extension.refreshMock");
         }
