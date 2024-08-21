@@ -37,10 +37,10 @@
           "description": "Port for the proxy server",
           "order": 1
         },
-        "proxyMocker.targetPort": {
-          "type": "number",
-          "default": 4200,
-          "description": "Target port for the proxy server",
+        "proxyMocker.targetUri": {
+          "type": "string",
+          "default": "http://localhost:4200",
+          "description": "Target Uri for the proxy server",
           "order": 2
         },
         "proxyMocker.automaticallyOpen": {
@@ -113,29 +113,33 @@
         "command": "proxyMockerExt.saveRequest",
         "title": "Save requests",
         "category": "Proxy Mocker",
+        "enablement": "!proxyMockerExt.isSaveRequest",
         "icon": "$(save)"
       },
       {
         "command": "proxyMockerExt.stopSaveRequest",
-        "title": "Stop save requests",
+        "title": "Stop saving requests",
         "category": "Proxy Mocker",
+        "enablement": "proxyMockerExt.isSaveRequest",
         "icon": "$(stop-circle)"
       },
       {
         "command": "proxyMockerExt.showMock",
-        "title": "Display mocks",
+        "title": "Display mocks list",
         "category": "Proxy Mocker"
       },
       {
         "command": "proxyMockerExt.useMock",
-        "title": "Replace real called by mocks",
+        "title": "Mock requests if existings mocks",
         "category": "Proxy Mocker",
+        "enablement": "!proxyMockerExt.isUseMock",
         "icon": "$(symbol-constant)"
       },
       {
         "command": "proxyMockerExt.stopUseMock",
-        "title": "Stop replace real called by mocks",
+        "title": "Stop mocking requests",
         "category": "Proxy Mocker",
+        "enablement": "proxyMockerExt.isUseMock",
         "icon": "$(stop)"
       },
       {
@@ -146,7 +150,7 @@
       },
       {
         "command": "proxyMockerExt.refreshMock",
-        "title": "Refresh mock list",
+        "title": "Refresh mocks",
         "category": "Proxy Mocker",
         "icon": "$(refresh)"
       }
