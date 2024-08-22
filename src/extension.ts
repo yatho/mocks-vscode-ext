@@ -43,7 +43,7 @@ function createTreeViews(context: vscode.ExtensionContext) {
     const selected = e.selection[0];
     const requestContent: {
       [key: string]: { method: string; status: number; body: string }[];
-    } = context.globalState.get("requestContent", {});
+    } = context.workspaceState.get("requestContent", {});
 
     proxyMockerDetail.openMockDetail(
       selected.label,
@@ -106,7 +106,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     let requestContent: {
       [key: string]: { method: string; status: number; body: string }[];
-    } = context.globalState.get("requestContent", {});
+    } = context.workspaceState.get("requestContent", {});
 
     if (!requestContent[req.url]) {
       requestContent[req.url] = [];
@@ -123,7 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     try {
-      await context.globalState.update("requestContent", requestContent);
+      await context.workspaceState.update("requestContent", requestContent);
     } catch (error) {
       console.error("Failed to save request data:", error);
     }
@@ -161,7 +161,7 @@ export function activate(context: vscode.ExtensionContext) {
       outputChannel.show();
       outputChannel.appendLine("Mocks");
       outputChannel.appendLine(
-        JSON.stringify(context.globalState.get("requestContent"), null, 2)
+        JSON.stringify(context.workspaceState.get("requestContent"), null, 2)
       );
     }),
     vscode.commands.registerCommand("proxyMockerExt.useMock", async () => {
@@ -175,7 +175,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         let requestContent: {
           [key: string]: { method: string; status: number; body: string }[];
-        } = context.globalState.get("requestContent", {});
+        } = context.workspaceState.get("requestContent", {});
 
         if (requestContent[req.url]) {
           const response = requestContent[req.url].find(
@@ -199,7 +199,7 @@ export function activate(context: vscode.ExtensionContext) {
       outputChannel.appendLine("Stop use mocks to replace real called...");
     }),
     vscode.commands.registerCommand("proxyMockerExt.deleteMocks", async () => {
-      context.globalState.update("requestContent", {});
+      context.workspaceState.update("requestContent", {});
       vscode.commands.executeCommand("proxyMockerExt.refreshMock");
     }),
     vscode.commands.registerCommand(
