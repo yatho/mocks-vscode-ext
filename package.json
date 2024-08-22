@@ -43,17 +43,11 @@
           "description": "Target Uri for the proxy server",
           "order": 2
         },
-        "proxyMocker.automaticallyOpen": {
-          "type": "boolean",
-          "default": false,
-          "description": "Open automatically the browser on proxy url when use mock or save request",
-          "order": 3
-        },
         "proxyMocker.pathPattern": {
           "type": "string",
           "default": "/api",
           "description": "Path pattern to intercept",
-          "order": 4
+          "order": 3
         }
       }
     },
