@@ -12,3 +12,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Save HTTP request mocks
 - Replace real HTTP request by mocks
 - Manage mocks
+
+## [0.0.2]
+
+### Fix
+
+- Automatically open on wrong url
+- Change targetPort configuration to targetUri
+
+## [0.0.3]
+
+### Fix
+
+- CORS during mock
+- Using pattern during mock
