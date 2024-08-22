@@ -39,8 +39,7 @@ To use mocks instead of requests, once they are captured, use the command **Prox
 This extension offers several customizable settings to configure how the proxy server operates and handle requests.
 
 - `proxyMocker.proxyPort`: Specifies the port on which the proxy server will listen for incoming requests. You can change this to any available port as needed. By default is **8000**.
-- `proxyMocker.targetUri`: Defines the uri target of the backend server or service that the proxy server will forward requests to. This is typically the uri where your application is running. By default: **http://localhost:4200**.
-- `proxyMocker.automaticallyOpen`: If set to true, the browser will automatically open the proxy URL when the "Mock requests" or "Save requests" mode is activated. This is helpful for quickly testing mocked endpoints.
+- `proxyMocker.targetUri`: Defines the uri target of the backend server or service that the proxy server will forward requests to. This is typically the uri where your application is running. By default: **http://localhost:3000**.
 - `proxyMocker.pathPattern`: Defines the path pattern used to intercept requests. Only requests matching this pattern will be saved or mocked by the extension. You can customize this to match specific API endpoints, for example **/api/v1/**. By default: **/api**.
 
 ## Contributing

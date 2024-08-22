@@ -12,9 +12,9 @@ let server: http.Server | null = null;
 
 function createProxy(outputChannel: vscode.OutputChannel) {
   const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
-  const proxy = createProxyServer({});
+  const proxy = createProxyServer({ changeOrigin: true });
   const proxyPort = config.get<number>("proxyPort", 8000);
-  const targetUri = config.get<string>("targetUri", "http://localhost:4200");
+  const targetUri = config.get<string>("targetUri", "http://localhost:3000");
 
   server = http.createServer(function (req, res) {
     // Remove caching headers
@@ -52,26 +52,6 @@ function createTreeViews(context: vscode.ExtensionContext) {
   });
 
   return treeDataProvider;
-}
-
-async function openProxyUri() {
-  const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
-  const proxyPort = config.get<number>("proxyPort", 8000);
-  const proxyUri = vscode.Uri.parse(`http://localhost:${proxyPort}`);
-  if (proxyUri) {
-    const automaticallyOpen = config?.get<boolean>("automaticallyOpen", true);
-    if (automaticallyOpen) {
-      vscode.env.openExternal(proxyUri);
-    } else {
-      const openUri = await vscode.window.showQuickPick(["Yes", "No"], {
-        canPickMany: false,
-        title: "Do you want open the proxy uri ?",
-      });
-      if (openUri === "Yes") {
-        vscode.env.openExternal(proxyUri);
-      }
-    }
-  }
 }
 
 function changeMockContext(value: boolean) {
@@ -171,7 +151,6 @@ export function activate(context: vscode.ExtensionContext) {
         }
       });
       outputChannel.appendLine("Start save request...");
-      openProxyUri();
     }),
     vscode.commands.registerCommand("proxyMockerExt.stopSaveRequest", () => {
       changeSaveContext(false);
@@ -187,8 +166,10 @@ export function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand("proxyMockerExt.useMock", async () => {
       changeMockContext(true);
+      const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
+      const pathPattern = config.get<string>("pathPattern", "/api");
       proxy.on("proxyReq", function (proxyReq, req, res) {
-        if (!req.url?.includes("api")) {
+        if (!req.url?.match(pathPattern)) {
           return;
         }
 
@@ -203,15 +184,14 @@ export function activate(context: vscode.ExtensionContext) {
           if (response) {
             res.writeHead(response.status, {
               "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
             });
             res.end(response.body);
             return;
           }
         }
       });
-
-      outputChannel.appendLine("Proxy en cours d'exécution...");
-      openProxyUri();
+      outputChannel.appendLine("Start using mock...");
     }),
     vscode.commands.registerCommand("proxyMockerExt.stopUseMock", () => {
       changeMockContext(false);
