@@ -26,3 +26,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - CORS during mock
 - Using pattern during mock
+
+## [0.0.4]
+
+### Fix
+
+- Save request by workspace
