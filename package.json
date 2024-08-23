@@ -1,6 +1,6 @@
 {
   "name": "proxy-mocker",
-  "displayName": "proxyMocker",
+  "displayName": "Proxy Mocker",
   "description": "A Visual Studio Code extension to intercept HTTP requests, simplify mocking for unit tests, and optionally mock responses directly.",
   "author": {
     "name": "Yann-Thomas Le Moigne",

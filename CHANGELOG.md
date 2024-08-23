@@ -32,3 +32,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Fix
 
 - Save request by workspace
+
+## [0.0.5]
+
+### Quality
+
+- Change extension name from **proxyMocker** to **Proxy Mocker**
