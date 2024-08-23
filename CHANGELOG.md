@@ -39,6 +39,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Change extension name from **proxyMocker** to **Proxy Mocker**.
 
+## [0.0.6]
+
 ### Fix
 
 - Display workspace instead of global state in treeview.
