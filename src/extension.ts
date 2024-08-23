@@ -1,6 +1,6 @@
 import vscode from "vscode";
 import http from "http";
-import { ProxyMockerDetail } from "./ProxyMockerDetail";
+import { openMockDetail } from "./ProxyMockerDetail";
 import { createProxyServer } from "http-proxy";
 import { ProxyMockerViewProvider } from "./ProxyMockerViewProvider";
 import { decodeBuffer } from "http-encoding";
@@ -10,7 +10,7 @@ const PROXY_MOCKER = "proxyMocker";
 
 let server: http.Server | null = null;
 
-function createProxy(outputChannel: vscode.OutputChannel) {
+function createProxy() {
   const config = vscode.workspace.getConfiguration(PROXY_MOCKER);
   const proxy = createProxyServer({ changeOrigin: true });
   const proxyPort = config.get<number>("proxyPort", 8000);
@@ -33,8 +33,6 @@ function createTreeViews(context: vscode.ExtensionContext) {
     treeDataProvider,
   });
 
-  const proxyMockerDetail = new ProxyMockerDetail();
-
   treeView.onDidChangeSelection((e) => {
     if (e.selection.length === 0) {
       return;
@@ -45,10 +43,7 @@ function createTreeViews(context: vscode.ExtensionContext) {
       [key: string]: { method: string; status: number; body: string }[];
     } = context.workspaceState.get("requestContent", {});
 
-    proxyMockerDetail.openMockDetail(
-      selected.label,
-      requestContent[selected.label]
-    );
+    openMockDetail(selected.label, requestContent[selected.label]);
   });
 
   return treeDataProvider;
@@ -73,7 +68,7 @@ function changeSaveContext(value: boolean) {
 export function activate(context: vscode.ExtensionContext) {
   const outputChannel = vscode.window.createOutputChannel("Proxy Mocker");
   let treeDataProvider = createTreeViews(context);
-  let proxy = createProxy(outputChannel);
+  let proxy = createProxy();
 
   vscode.workspace.onDidChangeConfiguration((event) => {
     if (!event.affectsConfiguration(PROXY_MOCKER)) {
@@ -83,7 +78,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     proxy.close();
 
-    proxy = createProxy(outputChannel);
+    proxy = createProxy();
   });
 
   function logAndSaveRequest(
@@ -146,7 +141,7 @@ export function activate(context: vscode.ExtensionContext) {
             const encoding = proxyRes.headers["content-encoding"];
             const decoded = await decodeBuffer(buffer, encoding);
             logAndSaveRequest(req, proxyRes, decoded.toString("utf-8"));
-            vscode.commands.executeCommand("extension.refreshMock");
+            vscode.commands.executeCommand("proxyMockerExt.refreshMock");
           });
         }
       });
