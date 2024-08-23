@@ -30,7 +30,7 @@ export class RequestMock extends vscode.TreeItem {
 }
 
 function getMocks(context: vscode.ExtensionContext): RequestMock[] {
-  const requestContent = context.globalState.get("requestContent", {});
+  const requestContent = context.workspaceState.get("requestContent", {});
   return Object.keys(requestContent)
     .map((key) => ({
       label: key,

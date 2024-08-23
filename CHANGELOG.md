@@ -37,4 +37,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Quality
 
-- Change extension name from **proxyMocker** to **Proxy Mocker**
+- Change extension name from **proxyMocker** to **Proxy Mocker**.
+
+### Fix
+
+- Display workspace instead of global state in treeview.
+- Call refresh correctly after saved a request.

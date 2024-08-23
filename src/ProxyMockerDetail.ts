@@ -1,18 +1,16 @@
 import vscode from "vscode";
 
-export class ProxyMockerDetail {
-  openMockDetail(
-    uri: string,
-    mock: { method: string; status: number; body: string }[]
-  ) {
-    const view = vscode.window.createWebviewPanel(
-      "proxyMockerViewDetails",
-      uri,
-      vscode.ViewColumn.Active
-    );
+export function openMockDetail(
+  uri: string,
+  mock: { method: string; status: number; body: string }[]
+): void {
+  const view = vscode.window.createWebviewPanel(
+    "proxyMockerViewDetails",
+    uri,
+    vscode.ViewColumn.Active
+  );
 
-    view.webview.html = getWebviewContent(uri, mock);
-  }
+  view.webview.html = getWebviewContent(uri, mock);
 }
 
 function getWebviewContent(
